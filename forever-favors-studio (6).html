@@ -1,0 +1,977 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forever Favors · Post Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital@0;1&family=Great+Vibes&family=Dancing+Script:wght@400;600&family=Pinyon+Script&family=Montserrat:wght@300;400;500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2c2622; --paper:#fbf7f2; --card:#ffffff;
+    --terra:#9b4d43; --terra-soft:#c08577; --line:#e7ddd2;
+    --muted:#8a7d72; --shadow:0 1px 2px rgba(60,40,30,.05),0 8px 24px rgba(60,40,30,.07);
+    --hh:64px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:"Montserrat",system-ui,sans-serif;color:var(--ink);
+    background:var(--paper);line-height:1.45;-webkit-font-smoothing:antialiased;
+  }
+  header.top{
+    padding:18px 22px;border-bottom:1px solid var(--line);
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;background:var(--paper);
+    position:sticky;top:0;z-index:20;
+  }
+  .brand{font-family:"Cormorant Garamond",serif;color:var(--terra);line-height:.95}
+  .brand b{display:block;font-weight:600;font-size:24px;letter-spacing:.5px}
+  .brand span{display:block;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--terra-soft);font-family:"Montserrat";font-weight:400}
+  header.top h1{font-family:"Playfair Display",serif;font-weight:500;font-size:16px;margin:0;color:var(--muted)}
+  .wrap{display:grid;grid-template-columns:380px 1fr;gap:0;min-height:calc(100vh - 64px)}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr}}
+  /* ---- controls ---- */
+  .panel{padding:20px;border-right:1px solid var(--line);background:var(--paper);min-width:0}
+  .group{margin-bottom:22px}
+  .group > .lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600}
+  .templates{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tmpl{
+    border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 11px;
+    cursor:pointer;text-align:left;font:inherit;color:var(--ink);transition:.15s;
+  }
+  .tmpl:hover{border-color:var(--terra-soft)}
+  .tmpl b{display:block;font-family:"Playfair Display",serif;font-weight:600;font-size:13px}
+  .tmpl small{color:var(--muted);font-size:11px}
+  .btn{
+    border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px;
+    cursor:pointer;font:inherit;font-size:13px;color:var(--ink);transition:.15s;display:inline-flex;
+    align-items:center;gap:7px;justify-content:center;
+  }
+  .btn:hover{border-color:var(--terra-soft)}
+  .btn.primary{background:var(--terra);color:#fff;border-color:var(--terra);font-weight:500}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn.block{width:100%}
+  .uploader{
+    border:1.5px dashed var(--line);border-radius:14px;padding:18px;text-align:center;cursor:pointer;
+    color:var(--muted);font-size:13px;transition:.15s;background:var(--card);
+  }
+  .uploader:hover{border-color:var(--terra-soft);color:var(--ink)}
+  .uploader b{color:var(--terra);font-weight:600}
+  input[type=file]{display:none}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--card)}
+  .seg button{border:0;background:transparent;padding:7px 11px;cursor:pointer;font:inherit;font-size:12px;color:var(--muted)}
+  .seg button.on{background:var(--terra);color:#fff}
+  .slider{display:grid;grid-template-columns:64px 1fr 38px;gap:8px;align-items:center;font-size:12px;color:var(--muted);margin:6px 0}
+  input[type=range]{width:100%;accent-color:var(--terra)}
+  /* ---- block cards ---- */
+  .blocks{display:flex;flex-direction:column;gap:10px}
+  .bcard{border:1px solid var(--line);border-radius:13px;background:var(--card);padding:12px;transition:.15s}
+  .bcard.active{border-color:var(--terra);box-shadow:0 0 0 3px rgba(155,77,67,.08)}
+  .bcard .bhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:6px}
+  .bcard .bname{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--terra);font-weight:600;cursor:pointer}
+  .bcard textarea{
+    width:100%;border:1px solid var(--line);border-radius:9px;padding:9px;font:inherit;font-size:13px;
+    resize:vertical;min-height:42px;color:var(--ink);background:var(--paper)
+  }
+  .bcard select{border:1px solid var(--line);border-radius:8px;padding:6px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)}
+  .minirow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .iconbtn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 9px;cursor:pointer;font:inherit;font-size:12px;color:var(--muted)}
+  .iconbtn.on{background:var(--terra);color:#fff;border-color:var(--terra)}
+  .iconbtn.danger:hover{border-color:#c0392b;color:#c0392b}
+  input[type=color]{width:34px;height:30px;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:2px;cursor:pointer}
+  .swatch{width:22px;height:22px;border-radius:6px;border:1px solid var(--line);cursor:pointer}
+  .genhint{font-size:12px;color:var(--muted);margin-top:9px;line-height:1.4}
+  .genresults{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+  .gcard{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:11px 12px;cursor:pointer;transition:.15s}
+  .gcard:hover{border-color:var(--terra);box-shadow:0 0 0 3px rgba(155,77,67,.07)}
+  .gcard .gprimary{font-family:"Playfair Display",serif;font-size:15px;font-weight:600;color:var(--ink);line-height:1.15}
+  .gcard .gsecondary{font-size:12px;color:var(--muted);margin-top:3px}
+  .gcard .gtag{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--terra-soft);font-weight:600;margin-bottom:5px}
+  .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-2px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .btn.primary:disabled{opacity:.7;cursor:wait}
+  .keybox{margin-top:11px;border-top:1px solid var(--line);padding-top:10px}
+  .keybox summary{font-size:11px;color:var(--muted);cursor:pointer;letter-spacing:.3px}
+  .keybox input{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:12px;background:var(--card);color:var(--ink);margin:8px 0 5px}
+  .keybox small{font-size:11px;color:var(--muted);line-height:1.4;display:block}
+  .fontlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .fontchip{font-size:11px;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:4px 10px;color:var(--terra)}
+  /* ---- stage ---- */
+  .stage{padding:26px;display:flex;flex-direction:column;align-items:center;gap:14px;background:
+    radial-gradient(120% 90% at 50% 0%,#f3ece2 0%,var(--paper) 60%);
+    position:sticky;top:calc(var(--hh) + 8px);align-self:start;
+    max-height:calc(100vh - var(--hh) - 16px);overflow:auto}
+  @media (max-width:900px){
+    .stage{order:-1;top:var(--hh);max-height:58vh;z-index:6;padding:14px;
+      border-bottom:1px solid var(--line)}
+    .panel{border-right:0}
+  }
+  .canvas-shell{box-shadow:var(--shadow);border-radius:6px;overflow:hidden;background:#fff;line-height:0;max-width:min(440px,92vw)}
+  canvas{width:100%;height:auto;display:block;touch-action:none;cursor:grab}
+  canvas.dragging{cursor:grabbing}
+  .hint{color:var(--muted);font-size:12.5px;text-align:center;max-width:440px}
+  .hint kbd{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-family:inherit;font-size:11px}
+  .stagebar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+</style>
+
+<header class="top">
+  <div class="brand"><b>Forever favors</b><span>Post Studio</span></div>
+  <h1>Upload a photo · choose a layout · drag, tweak, download</h1>
+</header>
+
+<div class="wrap">
+  <!-- CONTROLS -->
+  <div class="panel">
+    <div class="group">
+      <div class="lbl">1 · Your photo</div>
+      <label class="uploader" id="drop">
+        <b>Click to upload</b> or drop an image here
+        <input type="file" id="file" accept="image/*">
+      </label>
+      <div class="slider"><span>Zoom</span><input type="range" id="imgZoom" min="1" max="3" step="0.01" value="1"><span id="imgZoomV">1.0</span></div>
+      <div class="slider"><span>Move ↔</span><input type="range" id="imgX" min="-0.5" max="0.5" step="0.005" value="0"><span></span></div>
+      <div class="slider"><span>Move ↕</span><input type="range" id="imgY" min="-0.5" max="0.5" step="0.005" value="0"><span></span></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">2 · Layout</div>
+      <div class="templates" id="templates"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">3 · Write my copy <span style="text-transform:none;letter-spacing:0;color:var(--terra-soft);font-weight:400">— offline, no cost</span></div>
+      <div class="minirow" style="margin-bottom:8px">
+        <select id="genProduct" style="flex:1;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)">
+          <option value="general">Photo is… general keepsake</option>
+          <optgroup label="Engraved keepsakes">
+            <option value="cakeknife">Cake knife / server</option>
+            <option value="chefknife">Chef's knife</option>
+            <option value="cutlery">Cutlery set</option>
+            <option value="ringtray">Ring tray / box</option>
+            <option value="trinket">Trinket dish</option>
+            <option value="jewellerycase">Jewellery case</option>
+            <option value="pen">Pen</option>
+            <option value="watch">Watch engraving</option>
+            <option value="perfume">Perfume engraving</option>
+            <option value="cufflinks">Cufflinks</option>
+            <option value="lapelpins">Lapel pins</option>
+            <option value="mirror">Mirror</option>
+            <option value="hairbrush">Hair brush</option>
+            <option value="hanger">Wooden hanger</option>
+            <option value="glassware">Engraved glassware</option>
+            <option value="waterbottle">Water bottle</option>
+            <option value="cuttingboard">Wooden cutting board</option>
+            <option value="coasters">Coasters</option>
+            <option value="embosser">Embosser (tissue / notes)</option>
+          </optgroup>
+          <optgroup label="Cake, dessert & drinks">
+            <option value="cake">Cake / first cut</option>
+            <option value="caketopper">Cake topper</option>
+            <option value="desserttopper">Dessert topper</option>
+            <option value="stirrer">Drink stirrer</option>
+          </optgroup>
+          <optgroup label="Table & stationery">
+            <option value="table">Table & details</option>
+            <option value="menu">Menu card</option>
+            <option value="nikkahnama">Nikkahnama</option>
+            <option value="invites">Wedding invite</option>
+            <option value="newspaperinvites">Newspaper invite</option>
+          </optgroup>
+          <optgroup label="Favours & tags">
+            <option value="minttobe">Mint to be (mints)</option>
+            <option value="dalatags">Dala tags</option>
+          </optgroup>
+          <optgroup label="Guest books & games">
+            <option value="jarofwishes">A jar full of wishes</option>
+            <option value="heartguestbook">Heart guest book</option>
+            <option value="jengaguestbook">Jenga guest book</option>
+            <option value="drawaface">Draw-a-face guest book</option>
+            <option value="findgroom">Find the groom cards</option>
+            <option value="findbride">Find the bride cards</option>
+            <option value="uno">UNO cards</option>
+          </optgroup>
+          <optgroup label="People">
+            <option value="couple">Couple photo</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="minirow" style="margin-bottom:8px">
+        <input id="genNames" placeholder="Names (e.g. Zeba & Fardin)" style="flex:2;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)">
+        <input id="genDate" placeholder="Date" style="flex:1;min-width:70px;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)">
+      </div>
+      <button class="btn primary block" id="genCopy">✨ Suggest copy</button>
+      <div class="genhint" id="genHint">Pick a layout, choose what's in the photo, then tap suggest.</div>
+      <div id="genResults" class="genresults"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">4 · Text <span style="text-transform:none;let-spacing:0;color:var(--terra-soft);font-weight:400">— click a block, then drag it on the canvas</span></div>
+      <div class="blocks" id="blocks"></div>
+      <button class="btn block" id="addBlock" style="margin-top:10px">＋ Add text block</button>
+    </div>
+
+    <div class="group">
+      <div class="lbl">Fonts</div>
+      <label class="btn block">＋ Add a font file (.ttf / .otf / .woff)<input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2" multiple></label>
+      <div class="genhint" id="fontHint">Drop in <b>Brittany Signature</b>, <b>Karatone Demo</b>, or any font you own — it'll appear in every font menu above.</div>
+      <div id="fontList" class="fontlist"></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">5 · Readability</div>
+      <div class="row" style="margin-bottom:8px">
+        <span style="font-size:12px;color:var(--muted)">Darken behind text</span>
+        <div class="seg" id="scrim">
+          <button data-v="none" class="on">None</button>
+          <button data-v="bottom">Bottom</button>
+          <button data-v="top">Top</button>
+          <button data-v="both">Both</button>
+          <button data-v="full">Full</button>
+        </div>
+      </div>
+      <div class="slider"><span>Strength</span><input type="range" id="scrimS" min="0" max="0.7" step="0.02" value="0.35"><span id="scrimSV">35%</span></div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">6 · Branding</div>
+      <div class="row" style="margin-bottom:8px">
+        <span style="font-size:12px;color:var(--muted)">Logo</span>
+        <div class="seg" id="logoPos">
+          <button data-v="tl" class="on">Top-L</button>
+          <button data-v="tc">Top-C</button>
+          <button data-v="tr">Top-R</button>
+          <button data-v="none">Off</button>
+        </div>
+      </div>
+      <div class="slider"><span>Logo size</span><input type="range" id="logoScale" min="0.5" max="2.5" step="0.05" value="1"><span id="logoScaleV">100%</span></div>
+      <div class="slider"><span>Logo ↔</span><input type="range" id="logoX" min="0" max="1" step="0.005" value="0.055"><span></span></div>
+      <div class="slider"><span>Logo ↕</span><input type="range" id="logoY" min="0" max="1" step="0.005" value="0.045"><span></span></div>
+      <div class="row" style="margin-bottom:8px">
+        <label class="btn" style="font-size:12px;flex:1">Upload real logo<input type="file" id="logoFile" accept="image/*"></label>
+        <button class="btn" id="logoClear" style="font-size:12px">Use text</button>
+      </div>
+      <div class="row">
+        <label class="iconbtn on" id="handleToggle">@ handle</label>
+        <input id="handleText" value="@forever.favors" style="flex:1;border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit;font-size:12px;background:var(--card);color:var(--ink)">
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="lbl">Canvas size</div>
+      <div class="seg" id="ratio">
+        <button data-v="4:5" class="on">Post 4:5</button>
+        <button data-v="1:1">Square</button>
+        <button data-v="9:16">Story 9:16</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE -->
+  <div class="stage">
+    <div class="canvas-shell"><canvas id="cv" width="1080" height="1350"></canvas></div>
+    <div class="stagebar">
+      <button class="btn primary" id="download">⬇ Download PNG</button>
+      <button class="btn" id="reset">Reset layout</button>
+    </div>
+    <p class="hint">Drag any text directly on the canvas to reposition it. Press <kbd>Enter</kbd> inside a text box for line breaks.</p>
+  </div>
+</div>
+
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const RATIOS = {'4:5':[1080,1350], '1:1':[1080,1080], '9:16':[1080,1920]};
+let W = 1080, H = 1350;
+
+const FONTS = ['Playfair Display','Cormorant Garamond','EB Garamond','Great Vibes','Dancing Script','Pinyon Script','Montserrat','Poppins'];
+
+let uid = 1;
+function block(o){ return Object.assign({
+  id: uid++, name:'Text', text:'Text', font:'Playfair Display', weight:400, italic:false,
+  align:'left', size:64, spacing:0, lineHeight:1.12, color:'#ffffff', shadow:true,
+  x:0.08, y:0.1
+}, o); }
+
+// ---- Templates mirroring the five example styles ----
+const TEMPLATES = {
+  spotlight:{ name:'Product spotlight', desc:'Script accent + detail line', logo:'tl', handle:true, blocks:()=>[
+    block({name:'Accent', text:'Grace Your Tables\nwith Elegance', font:'Great Vibes', size:78, align:'right', x:0.92, y:0.14, lineHeight:1.0}),
+    block({name:'Detail', text:'Intricate Feathers,\nFlawless Shine', font:'Cormorant Garamond', weight:500, size:42, align:'left', x:0.08, y:0.78, lineHeight:1.15}),
+  ]},
+  statement:{ name:'Bold statement', desc:'Small label + big serif', logo:'tr', handle:true, blocks:()=>[
+    block({name:'Label', text:'Remember this', font:'Montserrat', weight:400, size:30, align:'center', x:0.5, y:0.2, shadow:true}),
+    block({name:'Headline', text:'YOUR WEDDING,\nYOUR WAY', font:'Playfair Display', weight:700, size:90, align:'center', x:0.5, y:0.4, lineHeight:1.08, spacing:1}),
+  ]},
+  couple:{ name:'Couple feature', desc:'Names + script subtitle', logo:'tc', handle:false, blocks:()=>[
+    block({name:'Label', text:'Beautiful people, beautiful moments', font:'Cormorant Garamond', weight:500, size:34, align:'left', x:0.06, y:0.4}),
+    block({name:'Names', text:"Sadat & Promi's day", font:'Playfair Display', weight:700, italic:true, size:78, align:'left', x:0.05, y:0.44}),
+    block({name:'Script', text:'El amor está en los detalles', font:'Great Vibes', size:58, align:'left', x:0.06, y:0.55}),
+  ]},
+  moment:{ name:'The moment', desc:'Italic serif headline', logo:'tr', handle:false, blocks:()=>[
+    block({name:'Headline', text:'The First Cut\nTogether', font:'Playfair Display', italic:true, weight:600, size:80, align:'left', x:0.07, y:0.26, lineHeight:1.05}),
+    block({name:'Subtitle', text:'capturing the sweetest moments\nof their celebration', font:'Cormorant Garamond', weight:500, size:36, align:'left', x:0.07, y:0.42, lineHeight:1.2}),
+  ]},
+  detail:{ name:'Detail close-up', desc:'Single italic line', logo:'tr', handle:false, blocks:()=>[
+    block({name:'Caption', text:'Personalized knife engraved with their names', font:'Playfair Display', italic:true, weight:500, size:48, align:'center', x:0.5, y:0.24, lineHeight:1.15}),
+  ]},
+};
+
+const state = {
+  ratio:'4:5', img:null, imgData:null, imgZoom:1, imgX:0, imgY:0,
+  scrim:'none', scrimS:0.35,
+  blocks: TEMPLATES.spotlight.blocks(),
+  logo:{ mode:'tl', img:null, scale:1, x:0.055, y:0.045, align:'left' },
+  handle:{ show:true, text:'@forever.favors' },
+  active:null
+};
+
+// ---------- rendering ----------
+function fontStr(b){
+  const it = b.italic ? 'italic ' : '';
+  return `${it}${b.weight} ${b.size}px "${b.font}"`;
+}
+function applyFont(b){
+  ctx.font = fontStr(b);
+  ctx.letterSpacing = (b.spacing||0)+'px';
+}
+function blockMetrics(b){
+  applyFont(b);
+  const lines = b.text.split('\n');
+  let maxW = 0;
+  for(const ln of lines) maxW = Math.max(maxW, ctx.measureText(ln).width);
+  const lh = b.size * b.lineHeight;
+  const ax = b.x*W, ay = b.y*H;
+  let left = b.align==='left' ? ax : b.align==='center' ? ax-maxW/2 : ax-maxW;
+  return { left, top:ay, width:maxW, height:lines.length*lh, lines, lh, ax, ay };
+}
+function drawBlock(b, ghost){
+  const m = blockMetrics(b);
+  ctx.fillStyle = b.color;
+  ctx.textAlign = b.align;
+  ctx.textBaseline = 'top';
+  if(b.shadow){ ctx.shadowColor='rgba(0,0,0,.45)'; ctx.shadowBlur=18; ctx.shadowOffsetY=2; }
+  else { ctx.shadowColor='transparent'; ctx.shadowBlur=0; }
+  m.lines.forEach((ln,i)=> ctx.fillText(ln, m.ax, m.ay + i*m.lh));
+  ctx.shadowColor='transparent'; ctx.shadowBlur=0;
+  if(ghost){
+    ctx.strokeStyle='rgba(155,77,67,.9)'; ctx.lineWidth=2; ctx.setLineDash([8,7]);
+    ctx.strokeRect(m.left-10, m.top-8, m.width+20, m.height+16);
+    ctx.setLineDash([]);
+  }
+}
+function drawScrim(){
+  if(state.scrim==='none') return;
+  const a = state.scrimS;
+  const mk = (x0,y0,x1,y1,stops)=>{ const g=ctx.createLinearGradient(x0,y0,x1,y1); stops.forEach(s=>g.addColorStop(s[0],s[1])); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); };
+  const c = (al)=>`rgba(0,0,0,${al})`;
+  if(state.scrim==='full'){ ctx.fillStyle=c(a); ctx.fillRect(0,0,W,H); }
+  if(state.scrim==='bottom'||state.scrim==='both') mk(0,H,0,H*0.45,[[0,c(a)],[1,c(0)]]);
+  if(state.scrim==='top'||state.scrim==='both') mk(0,0,0,H*0.55,[[0,c(a)],[1,c(0)]]);
+}
+const LOGO_PRESETS={ tl:{x:0.055,y:0.045,align:'left'}, tc:{x:0.5,y:0.045,align:'center'}, tr:{x:0.945,y:0.045,align:'right'} };
+function placeLogo(preset){
+  if(preset==='none'){ state.logo.mode='none'; }
+  else { const pr=LOGO_PRESETS[preset]; state.logo.x=pr.x; state.logo.y=pr.y; state.logo.align=pr.align; state.logo.mode=preset; }
+  syncLogoSliders();
+}
+function logoMetrics(){
+  const s=state.logo.scale||1, align=state.logo.align;
+  const ax=state.logo.x*W, ay=state.logo.y*H;
+  let w,h;
+  if(state.logo.img){
+    w=W*0.16*s; h=w*(state.logo.img.naturalHeight/state.logo.img.naturalWidth);
+  }else{
+    ctx.font=`600 ${30*s}px "Cormorant Garamond"`; ctx.letterSpacing='0px';
+    const w1=ctx.measureText('Forever favors').width;
+    ctx.font=`400 ${10*s}px "Montserrat"`; ctx.letterSpacing=(2*s)+'px';
+    const w2=ctx.measureText('CRAFTING KEEPSAKES FOR YOUR FOREVER').width;
+    ctx.letterSpacing='0px';
+    w=Math.max(w1,w2); h=46*s;
+  }
+  const left = align==='left'?ax : align==='center'?ax-w/2 : ax-w;
+  return { left, top:ay, width:w, height:h, ax, ay, s, align };
+}
+function drawLogo(ghost){
+  if(state.logo.mode==='none') return;
+  const m=logoMetrics();
+  if(state.logo.img){
+    ctx.globalAlpha=0.96; ctx.drawImage(state.logo.img, m.left, m.top, m.width, m.height); ctx.globalAlpha=1;
+  }else{
+    ctx.fillStyle='#9b4d43'; ctx.textAlign=m.align; ctx.textBaseline='top'; ctx.letterSpacing='0px';
+    ctx.font=`600 ${30*m.s}px "Cormorant Garamond"`;
+    ctx.fillText('Forever favors', m.ax, m.ay);
+    ctx.font=`400 ${10*m.s}px "Montserrat"`; ctx.letterSpacing=(2*m.s)+'px';
+    ctx.fillText('CRAFTING KEEPSAKES FOR YOUR FOREVER', m.ax, m.ay+34*m.s);
+    ctx.letterSpacing='0px';
+  }
+  if(ghost){
+    ctx.strokeStyle='rgba(155,77,67,.9)'; ctx.lineWidth=2; ctx.setLineDash([8,7]);
+    ctx.strokeRect(m.left-10, m.top-8, m.width+20, m.height+16); ctx.setLineDash([]);
+  }
+}
+function drawHandle(){
+  if(!state.handle.show) return;
+  ctx.fillStyle='#ffffff'; ctx.textAlign='center'; ctx.textBaseline='alphabetic'; ctx.letterSpacing='1px';
+  ctx.font='400 28px "Montserrat"';
+  ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=10;
+  ctx.fillText(state.handle.text, W/2, H-H*0.045);
+  ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.letterSpacing='0px';
+}
+function drawImage(){
+  ctx.fillStyle='#efe7dc'; ctx.fillRect(0,0,W,H);
+  if(!state.img) return;
+  const iw=state.img.naturalWidth, ih=state.img.naturalHeight;
+  const scale=Math.max(W/iw,H/ih)*state.imgZoom;
+  const dw=iw*scale, dh=ih*scale;
+  const dx=(W-dw)/2 + state.imgX*W, dy=(H-dh)/2 + state.imgY*H;
+  ctx.drawImage(state.img, dx, dy, dw, dh);
+}
+function render(){
+  ctx.clearRect(0,0,W,H);
+  drawImage();
+  drawScrim();
+  state.blocks.forEach(b=> drawBlock(b, b.id===state.active));
+  drawLogo(state.active==='logo');
+  drawHandle();
+}
+
+// ---------- drag on canvas ----------
+let drag=null;
+function toCanvas(e){
+  const r=cv.getBoundingClientRect();
+  return { x:(e.clientX-r.left)*(W/r.width), y:(e.clientY-r.top)*(H/r.height) };
+}
+cv.addEventListener('pointerdown', e=>{
+  const p=toCanvas(e);
+  if(state.logo.mode!=='none'){
+    const m=logoMetrics();
+    if(p.x>=m.left-16 && p.x<=m.left+m.width+16 && p.y>=m.top-14 && p.y<=m.top+m.height+14){
+      drag={ type:'logo', ox:p.x-state.logo.x*W, oy:p.y-state.logo.y*H };
+      state.active='logo'; renderBlocks();
+      cv.setPointerCapture(e.pointerId); cv.classList.add('dragging'); render();
+      return;
+    }
+  }
+  for(let i=state.blocks.length-1;i>=0;i--){
+    const b=state.blocks[i], m=blockMetrics(b);
+    if(p.x>=m.left-14 && p.x<=m.left+m.width+14 && p.y>=m.top-12 && p.y<=m.top+m.height+12){
+      drag={ type:'block', id:b.id, ox:p.x-b.x*W, oy:p.y-b.y*H };
+      setActive(b.id); cv.setPointerCapture(e.pointerId); cv.classList.add('dragging');
+      return;
+    }
+  }
+});
+cv.addEventListener('pointermove', e=>{
+  if(!drag) return;
+  const p=toCanvas(e);
+  const nx=Math.max(0,Math.min(1,(p.x-drag.ox)/W));
+  const ny=Math.max(0,Math.min(1,(p.y-drag.oy)/H));
+  if(drag.type==='logo'){
+    state.logo.x=nx; state.logo.y=ny; state.logo.mode='free';
+    syncLogoSliders(); syncBranding(); render(); return;
+  }
+  const b=state.blocks.find(x=>x.id===drag.id);
+  b.x=nx; b.y=ny; render();
+});
+cv.addEventListener('pointerup', ()=>{ drag=null; cv.classList.remove('dragging'); });
+
+// ---------- UI wiring ----------
+function setActive(id){ state.active=id; renderBlocks(); render(); }
+
+function optionList(sel){ return FONTS.map(f=>`<option value="${f}" ${f===sel?'selected':''}>${f}</option>`).join(''); }
+
+function renderBlocks(){
+  const host=document.getElementById('blocks'); host.innerHTML='';
+  state.blocks.forEach(b=>{
+    const el=document.createElement('div');
+    el.className='bcard'+(b.id===state.active?' active':'');
+    el.innerHTML=`
+      <div class="bhead">
+        <span class="bname" data-act="select">${b.name}</span>
+        <button class="iconbtn danger" data-act="del">✕</button>
+      </div>
+      <textarea data-prop="text" rows="2">${b.text.replace(/</g,'&lt;')}</textarea>
+      <div class="minirow">
+        <select data-prop="font">${optionList(b.font)}</select>
+        <select data-prop="weight">
+          <option value="400" ${b.weight==400?'selected':''}>Regular</option>
+          <option value="600" ${b.weight==600?'selected':''}>Medium</option>
+          <option value="700" ${b.weight==700?'selected':''}>Bold</option>
+          <option value="900" ${b.weight==900?'selected':''}>Black</option>
+        </select>
+        <button class="iconbtn ${b.italic?'on':''}" data-act="italic">Italic</button>
+      </div>
+      <div class="minirow">
+        <div class="seg">
+          <button data-align="left" class="${b.align==='left'?'on':''}" style="padding:6px 10px">L</button>
+          <button data-align="center" class="${b.align==='center'?'on':''}" style="padding:6px 10px">C</button>
+          <button data-align="right" class="${b.align==='right'?'on':''}" style="padding:6px 10px">R</button>
+        </div>
+        <input type="color" data-prop="color" value="${b.color}">
+        <div class="swatch" data-color="#ffffff" style="background:#fff"></div>
+        <div class="swatch" data-color="#2c2622" style="background:#2c2622"></div>
+        <div class="swatch" data-color="#9b4d43" style="background:#9b4d43"></div>
+        <button class="iconbtn ${b.shadow?'on':''}" data-act="shadow">Glow</button>
+      </div>
+      <div class="slider"><span>Size</span><input type="range" data-prop="size" min="14" max="170" step="1" value="${b.size}"><span>${b.size}</span></div>
+      <div class="slider"><span>Spacing</span><input type="range" data-prop="spacing" min="-2" max="22" step="0.5" value="${b.spacing}"><span>${b.spacing}</span></div>
+      <div class="slider"><span>Line</span><input type="range" data-prop="lineHeight" min="0.9" max="2" step="0.02" value="${b.lineHeight}"><span>${b.lineHeight.toFixed(2)}</span></div>
+    `;
+    // wire each control to this block
+    el.querySelectorAll('[data-prop]').forEach(inp=>{
+      const prop=inp.dataset.prop;
+      inp.addEventListener('input',()=>{
+        let v=inp.value;
+        if(['size','spacing','lineHeight'].includes(prop)) v=parseFloat(v);
+        if(prop==='weight') v=parseInt(v);
+        b[prop]=v;
+        const sp=inp.parentElement.querySelector('span:last-child');
+        if(sp && inp.type==='range') sp.textContent = prop==='lineHeight'?(+v).toFixed(2):v;
+        render();
+      });
+    });
+    el.querySelector('[data-act="select"]').onclick=()=>setActive(b.id);
+    el.querySelector('[data-act="del"]').onclick=()=>{ state.blocks=state.blocks.filter(x=>x.id!==b.id); if(state.active===b.id)state.active=null; renderBlocks(); render(); };
+    el.querySelector('[data-act="italic"]').onclick=(ev)=>{ b.italic=!b.italic; ev.target.classList.toggle('on'); render(); };
+    el.querySelector('[data-act="shadow"]').onclick=(ev)=>{ b.shadow=!b.shadow; ev.target.classList.toggle('on'); render(); };
+    el.querySelectorAll('[data-align]').forEach(btn=> btn.onclick=()=>{ b.align=btn.dataset.align; renderBlocks(); render(); });
+    el.querySelectorAll('[data-color]').forEach(sw=> sw.onclick=()=>{ b.color=sw.dataset.color; renderBlocks(); render(); });
+    el.addEventListener('pointerdown',()=>{ if(b.id!==state.active) setActive(b.id); });
+    host.appendChild(el);
+  });
+}
+
+// templates panel
+const tHost=document.getElementById('templates');
+Object.entries(TEMPLATES).forEach(([key,t])=>{
+  const b=document.createElement('button'); b.className='tmpl';
+  b.innerHTML=`<b>${t.name}</b><small>${t.desc}</small>`;
+  b.onclick=()=>{
+    state.blocks=t.blocks(); state.active=state.blocks[0]?.id??null;
+    placeLogo(t.logo); state.handle.show=t.handle;
+    syncBranding(); renderBlocks(); render();
+  };
+  tHost.appendChild(b);
+});
+
+// image upload
+function loadImage(file, cb){
+  const r=new FileReader();
+  r.onload=()=>{ const im=new Image(); im.onload=()=>cb(im); im.src=r.result; };
+  r.readAsDataURL(file);
+}
+const fileInput=document.getElementById('file');
+function loadProduct(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    const url=r.result;
+    const m=/^data:(.+?);base64,(.*)$/.exec(url);
+    if(m) state.imgData={ mediaType:m[1], base64:m[2] };
+    const im=new Image(); im.onload=()=>{ state.img=im; render(); setGenHint(); }; im.src=url;
+  };
+  r.readAsDataURL(file);
+}
+document.getElementById('drop').addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',e=>{ if(e.target.files[0]) loadProduct(e.target.files[0]); });
+['dragover','dragenter'].forEach(ev=>document.getElementById('drop').addEventListener(ev,e=>{e.preventDefault();}));
+document.getElementById('drop').addEventListener('drop',e=>{ e.preventDefault(); const f=e.dataTransfer.files[0]; if(f) loadProduct(f); });
+
+// logo upload
+document.getElementById('logoFile').addEventListener('change',e=>{ if(e.target.files[0]) loadImage(e.target.files[0],im=>{ state.logo.img=im; render(); }); });
+document.getElementById('logoClear').onclick=()=>{ state.logo.img=null; render(); };
+
+// custom fonts
+const customFonts=[];
+function renderFontList(){
+  const host=document.getElementById('fontList'); host.innerHTML='';
+  customFonts.forEach(n=>{ const c=document.createElement('span'); c.className='fontchip'; c.style.fontFamily='"'+n+'"'; c.textContent=n; host.appendChild(c); });
+}
+async function addFont(file){
+  const name=file.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim();
+  try{
+    const buf=await file.arrayBuffer();
+    const ff=new FontFace(name, buf);
+    await ff.load();
+    document.fonts.add(ff);
+    if(!FONTS.includes(name)){ FONTS.push(name); customFonts.push(name); }
+    document.getElementById('fontHint').innerHTML='Added <b>'+name+'</b> \u2014 pick it from any font menu above.';
+    renderFontList(); renderBlocks(); render();
+  }catch(err){
+    document.getElementById('fontHint').textContent='Couldn\u2019t load that file. Use a .ttf, .otf, or .woff font file.';
+    console.error(err);
+  }
+}
+document.getElementById('fontFile').addEventListener('change',e=>{ [...e.target.files].forEach(addFont); e.target.value=''; });
+
+// image sliders
+const bind=(id,fn)=>document.getElementById(id).addEventListener('input',e=>{ fn(parseFloat(e.target.value)); render(); });
+bind('imgZoom',v=>{ state.imgZoom=v; document.getElementById('imgZoomV').textContent=v.toFixed(1); });
+bind('imgX',v=>state.imgX=v);
+bind('imgY',v=>state.imgY=v);
+bind('scrimS',v=>{ state.scrimS=v; document.getElementById('scrimSV').textContent=Math.round(v*100)+'%'; });
+bind('logoScale',v=>{ state.logo.scale=v; document.getElementById('logoScaleV').textContent=Math.round(v*100)+'%'; });
+bind('logoX',v=>{ state.logo.x=v; if(state.logo.mode!=='none') state.logo.mode='free'; syncBranding(); });
+bind('logoY',v=>{ state.logo.y=v; if(state.logo.mode!=='none') state.logo.mode='free'; syncBranding(); });
+function syncLogoSliders(){
+  const lx=document.getElementById('logoX'), ly=document.getElementById('logoY');
+  if(lx) lx.value=state.logo.x; if(ly) ly.value=state.logo.y;
+}
+
+// segmented controls
+function seg(id, fn){
+  const g=document.getElementById(id);
+  g.querySelectorAll('button').forEach(btn=> btn.onclick=()=>{
+    g.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    btn.classList.add('on'); fn(btn.dataset.v); render();
+  });
+}
+seg('scrim', v=>state.scrim=v);
+seg('logoPos', v=>placeLogo(v));
+seg('ratio', v=>{ state.ratio=v; [W,H]=RATIOS[v]; cv.width=W; cv.height=H; });
+
+function syncBranding(){
+  document.querySelectorAll('#logoPos button').forEach(b=>b.classList.toggle('on', b.dataset.v===state.logo.mode));
+  document.getElementById('handleToggle').classList.toggle('on', state.handle.show);
+}
+document.getElementById('handleToggle').onclick=function(){ state.handle.show=!state.handle.show; this.classList.toggle('on'); render(); };
+document.getElementById('handleText').addEventListener('input',e=>{ state.handle.text=e.target.value; render(); });
+
+document.getElementById('addBlock').onclick=()=>{ const b=block({name:'Text', text:'New text', x:0.5, y:0.5, align:'center'}); state.blocks.push(b); setActive(b.id); };
+document.getElementById('reset').onclick=()=>{ state.blocks=TEMPLATES.spotlight.blocks(); state.active=null; placeLogo('tl'); state.handle.show=true; syncBranding(); renderBlocks(); render(); };
+
+document.getElementById('download').onclick=()=>{
+  const prev=state.active; state.active=null; render();
+  cv.toBlob(b=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download='forever-favors-'+Date.now()+'.png';
+    a.click(); URL.revokeObjectURL(a.href);
+    state.active=prev; render();
+  },'image/png');
+};
+
+// ---------- Offline copy engine ----------
+const genBtn=document.getElementById('genCopy');
+const genHintEl=document.getElementById('genHint');
+const genResultsEl=document.getElementById('genResults');
+
+function setGenHint(msg){
+  if(msg){ genHintEl.textContent=msg; return; }
+  if(!state.blocks.length) genHintEl.textContent='Pick a layout first, then tap suggest.';
+  else genHintEl.textContent='Choose what’s in the photo, then tap suggest — three sets, instantly.';
+}
+
+const GEN={
+  general:{
+    script:['Where Forever Begins','The Little Details','Made for Keeps','A Love Worth Keeping','Sweeter Together','Cherished Always','Kept Close, Loved Always'],
+    headline:['YOUR WEDDING,\nYOUR WAY','MADE TO BE\nREMEMBERED','ONE DAY,\nFOREVER KEPT','THE DETAILS\nMAKE THE DAY'],
+    label:['Remember this','A detail worth keeping','For the keepsake lovers','The little things','Made just for them'],
+    sub:['Personalized keepsakes for your forever','Engraved by hand,\ntreasured for life','A keepsake from the day you said yes','Crafted to be kept,\nnot just used']
+  },
+  cakeknife:{
+    script:['The First Cut Together','Cut with Love','Sweeter Together'],
+    headline:['The First Cut\nTogether','Their Sweetest\nMoment'],
+    label:['Remember this','The first of forever','Capturing the moment'],
+    sub:['Personalized knife engraved with their names','Engraved to keep,\nnot just to cut','Their names, their day,\nforever in silver']
+  },
+  chefknife:{
+    script:['Sharper Together','For Two in the Kitchen','The Kitchen, Theirs'],
+    headline:['THEIR FIRST\nKITCHEN','SHARPER\nTOGETHER'],
+    label:['For the newlywed kitchen','Made to be used'],
+    sub:['Engraved for the cook\nof the house','Their name on the blade\nthat starts every meal']
+  },
+  cutlery:{
+    script:['Set for Two','Dine Forever','Every Meal, Together'],
+    headline:['SET FOR\nFOREVER','THEIR FIRST\nTABLE'],
+    label:['For every shared meal','Set with love'],
+    sub:['Engraved cutlery\nfor a lifetime of dinners','Their names at\nevery place setting']
+  },
+  ringtray:{
+    script:['Where the Rings Rest','Keeper of the Promise','Two Rings, One Home'],
+    headline:['A HOME FOR\nTHE RINGS','KEEPER OF\nTHE PROMISE'],
+    label:['For the most precious detail','A little keeper'],
+    sub:['A resting place for\nthe rings that matter','Engraved to hold\nyour forever','For rings, vows,\nand quiet promises']
+  },
+  trinket:{
+    script:['Grace Your Tables with Elegance','Where Treasures Rest','A Keeper of Little Treasures'],
+    headline:['GRACE YOUR\nTABLES','A HOME FOR\nWHAT YOU LOVE'],
+    label:['Intricate details','A detail worth keeping'],
+    sub:['Intricate feathers,\nflawless shine','For rings, vows,\nand little treasures','Elegance for every table']
+  },
+  jewellerycase:{
+    script:['Treasures, Kept Close','Where Sparkle Lives','Carry Your Forever'],
+    headline:['FOR EVERY\nTREASURE','KEEP IT\nCLOSE'],
+    label:['For the things she loves most','A keeper of treasures'],
+    sub:['Engraved to hold\nher dearest pieces','Her name on the case\nthat travels with her']
+  },
+  pen:{
+    script:['Signed with Love','The First Signature','Write Your Forever'],
+    headline:['SIGN YOUR\nFOREVER','THE FIRST\nSIGNATURE'],
+    label:['For the moment it’s official','Made to be signed'],
+    sub:['Engraved for the hand\nthat signs forever','Their name on the pen\nthat sealed the day']
+  },
+  watch:{
+    script:['Time, Beautifully Kept','Every Hour, Yours','Timeless Together'],
+    headline:['TIME WELL\nKEPT','EVERY HOUR,\nTOGETHER'],
+    label:['For the hours that matter','Timeless'],
+    sub:['Engraved on the back\nof every passing hour','Their date, kept close\nto the wrist']
+  },
+  perfume:{
+    script:['Bottled Memories','A Scent to Remember','Their Signature Scent'],
+    headline:['A SCENT TO\nREMEMBER','BOTTLED\nFOREVER'],
+    label:['For a scent that stays','Made personal'],
+    sub:['Engraved on the scent\nof their day','Their name on the bottle\nthat smells like forever']
+  },
+  cufflinks:{
+    script:['Dressed for Forever','The Finishing Touch','His Day, His Detail'],
+    headline:['THE GROOM’S\nDETAIL','DRESSED FOR\nFOREVER'],
+    label:['For the groom','The finishing touch'],
+    sub:['Engraved for the man\nof the moment','His initials, his day,\nat the cuff']
+  },
+  lapelpins:{
+    script:['A Detail at the Heart','Worn with Pride','Close to the Heart'],
+    headline:['WORN AT\nTHE HEART','THE GROOM’S\nDETAIL'],
+    label:['For the lapel','A small, proud detail'],
+    sub:['A keepsake pinned\nclose to the heart','His day, marked in\na small detail']
+  },
+  mirror:{
+    script:['Reflecting Forever','See Your Forever','A Beautiful Reflection'],
+    headline:['REFLECTING\nFOREVER','SEE YOUR\nFOREVER'],
+    label:['For her getting-ready moment','A pretty reflection'],
+    sub:['Engraved for the bride\nbefore she walks in','Her name where she sees\nherself on the day']
+  },
+  hairbrush:{
+    script:['Getting Ready, Together','Her Quiet Moment','Bridal Beginnings'],
+    headline:['HER GETTING-\nREADY MOMENT','BRIDAL\nBEGINNINGS'],
+    label:['For the bridal suite','A getting-ready keepsake'],
+    sub:['Engraved for the calm\nbefore the day','Her name on the brush\nthat starts the morning']
+  },
+  hanger:{
+    script:['The Dress, The Day','Worn Once, Kept Forever','Her Moment to Shine'],
+    headline:['YOUR WEDDING,\nYOUR WAY','THE DRESS THAT\nSTARTED IT ALL'],
+    label:['Remember this','Every detail, yours'],
+    sub:['Personalized for the bride\nwho keeps everything','Her name, her date, her day','A keepsake for the gown\nand the memory']
+  },
+  glassware:{
+    script:['Raise a Glass','Cheers to Forever','Toast to Two'],
+    headline:['RAISE A GLASS\nTO FOREVER','CHEERS TO\nTHE TWO OF YOU'],
+    label:['For the first toast','Cheers'],
+    sub:['Engraved glassware\nfor the very first toast','Their names where the\ncelebration is poured']
+  },
+  waterbottle:{
+    script:['Carry Your Forever','Always By Your Side','Sip by Sip'],
+    headline:['CARRY YOUR\nFOREVER','ALWAYS BY\nYOUR SIDE'],
+    label:['For the everyday','Made personal'],
+    sub:['Engraved to carry\nevery single day','Their name on the bottle\nthat goes everywhere']
+  },
+  cuttingboard:{
+    script:['Made in Their Kitchen','Gather & Slice','Home, Sliced'],
+    headline:['THEIR FIRST\nKITCHEN','GATHERED\nAT HOME'],
+    label:['For the newlywed home','Made to gather'],
+    sub:['Engraved for the board\nat the heart of the home','Their names where\nevery meal begins']
+  },
+  coasters:{
+    script:['Set It Down with Love','Every Cup, a Memory','A Resting Spot'],
+    headline:['SET DOWN\nWITH LOVE','EVERY CUP,\nA MEMORY'],
+    label:['For the little table moments','A small detail'],
+    sub:['Engraved coasters\nfor the home of two','Their names beneath\nevery shared cup']
+  },
+  embosser:{
+    script:['Sealed with You','Make Your Mark','Pressed in Forever'],
+    headline:['MAKE YOUR\nMARK','SEALED WITH\nLOVE'],
+    label:['For every little wrap','A personal seal'],
+    sub:['Emboss your names on\nevery tissue and note','A mark that makes\neverything yours']
+  },
+  cake:{
+    script:['The First Cut Together','Sweeter Together','Sealed with Sugar'],
+    headline:['The First Cut\nTogether','Their Sweetest\nMoment'],
+    label:['Capturing the sweetest moments','The first of forever'],
+    sub:['capturing the sweetest moments\nof their celebration','One cake, one cut,\none forever']
+  },
+  caketopper:{
+    script:['Crowning the Cake','Topped with Love','On Top, Together'],
+    headline:['TOPPED WITH\nLOVE','THE CAKE,\nCROWNED'],
+    label:['For the centrepiece','The finishing touch'],
+    sub:['A topper made\njust for their cake','Their names crowning\nthe sweetest moment']
+  },
+  desserttopper:{
+    script:['Sweet Little Details','Topped with Love','Bite-Sized Forever'],
+    headline:['SWEET\nDETAILS','TOPPED WITH\nLOVE'],
+    label:['For the dessert table','Little & sweet'],
+    sub:['Toppers for every\nlittle sweet','Their day, on every\nbite-sized treat']
+  },
+  stirrer:{
+    script:['Stir Up Some Love','Cheers, Stirred','A Little Swirl'],
+    headline:['STIR UP\nSOME LOVE','CHEERS,\nSTIRRED'],
+    label:['For the drinks table','A playful detail'],
+    sub:['Personalized stirrers\nfor every toast','Their names in\nevery glass']
+  },
+  menu:{
+    script:['Tonight’s Menu','Served with Love','A Seat at the Table'],
+    headline:['TONIGHT’S\nMENU','SERVED WITH\nLOVE'],
+    label:['For every place setting','Set the table'],
+    sub:['A menu designed\nfor their day','Every course, in\ntheir colours']
+  },
+  table:{
+    script:['Grace Your Tables with Elegance','The Little Details','Set with Love'],
+    headline:['THE DETAILS\nMAKE THE DAY','SET FOR\nFOREVER'],
+    label:['A detail worth keeping','The little things'],
+    sub:['Every detail, beautifully kept','Little touches,\nlasting memories']
+  },
+  nikkahnama:{
+    script:['Signed & Sealed','Where It Becomes Forever','The Sacred Yes'],
+    headline:['SIGNED &\nSEALED','THE MOMENT\nIT’S OFFICIAL'],
+    label:['Beautiful people, beautiful moments','The day it becomes official'],
+    sub:['A Nikkahnama as\nbeautiful as the vow','Their union, written\nand kept forever']
+  },
+  invites:{
+    script:['You’re Invited','The Beginning','Save the Day'],
+    headline:['YOU’RE\nINVITED','THE DAY\nBEGINS HERE'],
+    label:['For the first hello','Set the tone'],
+    sub:['An invitation\nthat sets the tone','Their day, introduced\nin their colours']
+  },
+  newspaperinvites:{
+    script:['Read All About It','Extra, Extra','Hot Off the Press'],
+    headline:['READ ALL\nABOUT IT','EXTRA,\nEXTRA'],
+    label:['For the playful invite','Front-page love'],
+    sub:['Their love story,\nprinted like the news','A wedding worth\nthe headlines']
+  },
+  minttobe:{
+    script:['Mint to Be','Sweet & Simple','A Little Favour'],
+    headline:['MINT\nTO BE','SWEET &\nSIMPLE'],
+    label:['For the favour table','A little thank-you'],
+    sub:['Tiny favours\nfor your guests','A sweet little thank-you\nfrom the two of you']
+  },
+  dalatags:{
+    script:['Tagged with Love','For the Dala','Little Details, Big Day'],
+    headline:['TAGGED WITH\nLOVE','FOR THE\nDALA'],
+    label:['For the gift trays','A finishing touch'],
+    sub:['Personalized tags\nfor every dala','Their names on\nevery gift exchanged']
+  },
+  jarofwishes:{
+    script:['A Jar Full of Wishes','Wishes for the Two','Drop a Wish'],
+    headline:['A JAR FULL\nOF WISHES','WISHES FOR\nFOREVER'],
+    label:['For your guests to share','Leave a wish'],
+    sub:['Guests leave a wish,\nyou keep them forever','Every hope for your\nmarriage, in one jar']
+  },
+  heartguestbook:{
+    script:['Sign with Love','Leave Your Heart','Hearts for the Couple'],
+    headline:['LEAVE YOUR\nHEART','SIGN WITH\nLOVE'],
+    label:['For your guests to sign','A heart from every guest'],
+    sub:['Guests sign a little heart\nto keep forever','A guest book made\nof hearts']
+  },
+  jengaguestbook:{
+    script:['Stack the Love','Play & Sign','Build a Memory'],
+    headline:['STACK THE\nLOVE','PLAY &\nSIGN'],
+    label:['A guest book you play','Sign a block'],
+    sub:['Guests sign a block,\nyou keep the tower','A guest book and\na game in one']
+  },
+  drawaface:{
+    script:['Draw Your Heart Out','Faces for the Couple','Sketch a Smile'],
+    headline:['DRAW A\nFACE','FACES FOR\nFOREVER'],
+    label:['A guest book to draw in','Leave your face'],
+    sub:['Guests draw themselves\nfor you to keep','The most personal\nguest book of all']
+  },
+  findgroom:{
+    script:['Find the Groom','Spot Him First','A Little Game'],
+    headline:['FIND THE\nGROOM','SPOT HIM\nFIRST'],
+    label:['A game for your guests','Play along'],
+    sub:['A playful card game\nfor the reception','Keep your guests smiling\nbetween courses']
+  },
+  findbride:{
+    script:['Find the Bride','Spot Her First','A Little Game'],
+    headline:['FIND THE\nBRIDE','SPOT HER\nFIRST'],
+    label:['A game for your guests','Play along'],
+    sub:['A playful card game\nfor the reception','Keep your guests smiling\nbetween courses']
+  },
+  uno:{
+    script:['Uno, Two, Forever','Play Your Cards','Wedded Game Night'],
+    headline:['UNO, TWO,\nFOREVER','PLAY YOUR\nCARDS'],
+    label:['A custom deck for two','Their game night'],
+    sub:['A personalized deck\nfor the newlyweds','Their names on\nevery card']
+  },
+  couple:{
+    script:['Two Hearts, One Day','Forever Starts Here','Where Love Begins','El amor está en los detalles'],
+    headline:['A LOVE\nWRITTEN DOWN','THEIR\nFOREVER'],
+    label:['Beautiful people, beautiful moments','The day they said yes','A love story begins'],
+    sub:['Capturing the sweetest moments\nof their celebration','The details that made the day','Love, signed and sealed']
+  }
+};
+
+function kindOf(b){
+  if(['Great Vibes','Dancing Script','Pinyon Script'].includes(b.font)) return 'script';
+  if(b.size>=70) return 'headline';
+  if(b.size<=36 && b.align==='center') return 'label';
+  return 'sub';
+}
+function poolFor(product,kind){
+  const g=GEN.general[kind]||[];
+  const p=(GEN[product]&&GEN[product][kind])||[];
+  return p.concat(g);
+}
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+function generateLocal(){
+  if(!state.blocks.length){ setGenHint('Pick a layout first so I know what copy to write.'); return; }
+  const product=document.getElementById('genProduct').value;
+  const names=(document.getElementById('genNames').value||'').trim();
+  const date=(document.getElementById('genDate').value||'').trim();
+  const used={script:new Set(),headline:new Set(),label:new Set(),sub:new Set()};
+  const nameHeads = names ? shuffle([names+'’s day', names, 'Celebrating\n'+names]) : [];
+  const variations=[];
+  for(let v=0; v<3; v++){
+    const blocks=state.blocks.map(b=>{
+      const k=kindOf(b);
+      let text;
+      if(k==='headline' && nameHeads.length && (b.name.toLowerCase().includes('name') || v>0)){
+        text=nameHeads[v % nameHeads.length];
+      }else{
+        let pool=poolFor(product,k).filter(x=>!used[k].has(x));
+        if(!pool.length) pool=poolFor(product,k);
+        text=pool[Math.floor(Math.random()*pool.length)];
+        used[k].add(text);
+      }
+      if(k==='sub' && date) text = text + '\n' + (names ? names+'  ·  '+date : date);
+      return {id:b.id, text:text||b.text};
+    });
+    variations.push({blocks});
+  }
+  showVariations(variations);
+  setGenHint('Tap a set to apply it — or tap suggest again for new ideas.');
+}
+
+function showVariations(vars){
+  genResultsEl.innerHTML='';
+  if(!vars||!vars.length){ setGenHint('Pick a layout, then tap suggest.'); return; }
+  const sorted=[...state.blocks].sort((a,b)=>b.size-a.size);
+  vars.forEach((v,i)=>{
+    const byId={}; v.blocks.forEach(x=> byId[x.id]=x.text);
+    const primary=(byId[sorted[0]?.id]||'').replace(/\n/g,' ');
+    const sec=sorted.slice(1).map(b=>byId[b.id]).filter(Boolean)[0];
+    const card=document.createElement('div'); card.className='gcard';
+    card.innerHTML='<div class="gtag">Option '+(i+1)+'</div>'+
+      '<div class="gprimary">'+((primary||'—').replace(/</g,'&lt;'))+'</div>'+
+      (sec?'<div class="gsecondary">'+sec.replace(/\n/g,' ').replace(/</g,'&lt;')+'</div>':'');
+    card.onclick=()=>{ state.blocks.forEach(b=>{ if(byId[b.id]!=null) b.text=byId[b.id]; }); renderBlocks(); render(); };
+    genResultsEl.appendChild(card);
+  });
+}
+genBtn.onclick=generateLocal;
+
+// keep sticky offset matched to the real header height
+function setHH(){
+  const h=document.querySelector('header.top');
+  if(h) document.documentElement.style.setProperty('--hh', h.offsetHeight+'px');
+}
+window.addEventListener('resize', setHH);
+setHH();
+
+// ---------- boot ----------
+async function boot(){
+  const probe=['400 40px "Playfair Display"','italic 700 40px "Playfair Display"','500 40px "Cormorant Garamond"',
+    '400 40px "Great Vibes"','400 40px "Dancing Script"','400 40px "Pinyon Script"','400 40px "Montserrat"','600 40px "Montserrat"','400 40px "EB Garamond"','400 40px "Poppins"'];
+  try{ await Promise.all(probe.map(f=>document.fonts.load(f))); await document.fonts.ready; }catch(e){}
+  renderBlocks(); render(); setGenHint(); setHH();
+}
+boot();
+</script>
